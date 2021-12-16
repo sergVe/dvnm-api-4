@@ -69,11 +69,11 @@ def fetch_nasa_images(directory, url):
 def fetch_nasa_epic_images(directory, url):
     image_date, image_name, image_url = '', '', ''
     query_params = {
-        'api_key': os.getenv('NASA_KEY'),
-        'count': '9'
+        'api_key': os.getenv('NASA_KEY')
     }
     response = get_response(url, query_params)
-    for i, response_unit in enumerate(response.json()):
+    limit_response = response.json()[:10]
+    for i, response_unit in enumerate(limit_response):
         print(i + 1)
         for k, v in response_unit.items():
             print(k, v)
@@ -88,9 +88,7 @@ def fetch_nasa_epic_images(directory, url):
 
         filename = f'nasa_epic_{i + 1}.png'
         path = os.path.abspath(os.path.join(directory, filename))
-        params = {k: v for (k, v) in query_params.items() if k == 'api_key'}
-        print(params)
-        download_image(path, image_url, params)
+        download_image(path, image_url, query_params)
         print('=' * 8)
 
 
