@@ -1,1 +1,5 @@
-.idea/
+/.idea/
+.env
+/nasa_epic_directory/
+/nasa_directory/
+/images/
