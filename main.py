@@ -127,5 +127,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-# xhQ4MBfxmfhUsxakRU2rZqZrdIannJ5se0YJzUEl
-# https://api.nasa.gov/planetary/apod?api_key=xhQ4MBfxmfhUsxakRU2rZqZrdIannJ5se0YJzUEl
