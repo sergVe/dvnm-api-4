@@ -55,7 +55,7 @@ def fetch_spacex_last_launch(directory, url):
 def fetch_nasa_images(directory, url):
     query_params = {
         'api_key': os.getenv('NASA_KEY'),
-        'count': '50'
+        'count': '40'
     }
     response = get_response(url, query_params)
     data = response.json()
@@ -74,12 +74,9 @@ def fetch_nasa_epic_images(directory, url):
     response = get_response(url, query_params)
     limit_response = response.json()[:10]
     for i, response_unit in enumerate(limit_response):
-        print(i + 1)
         for k, v in response_unit.items():
-            print(k, v)
             if k == 'date':
                 image_date = datetime.datetime.fromisoformat(v)
-                print(image_date)
             if k == 'image':
                 image_name = v
         image_url = f'https://api.nasa.gov/EPIC/archive/natural/' \
@@ -89,7 +86,6 @@ def fetch_nasa_epic_images(directory, url):
         filename = f'nasa_epic_{i + 1}.png'
         path = os.path.abspath(os.path.join(directory, filename))
         download_image(path, image_url, query_params)
-        print('=' * 8)
 
 
 def main():
@@ -109,7 +105,7 @@ def main():
         if not os.path.exists(nasa_epic_directory):
             os.makedirs(nasa_epic_directory)
 
-        fetch_nasa_images(nasa_directory, nasa_url)
+        fetch_spacex_last_launch(directory, url_spacex)
         fetch_nasa_images(nasa_directory, nasa_url)
         fetch_nasa_epic_images(nasa_epic_directory, nasa_epic_url)
 
