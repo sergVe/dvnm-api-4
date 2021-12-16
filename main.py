@@ -93,15 +93,12 @@ def fetch_nasa_epic_images(directory, url):
 
 
 def main():
-    # filename = 'hubble.jpeg'
-    # url_wiki = 'https://upload.wikimedia.org/wikipedia/commons/3/3f/HST-SM4.jpeg'
     url_spacex = 'https://api.spacexdata.com/v4/launches/'
     directory = 'images'
     nasa_directory = 'nasa_directory'
     nasa_epic_directory = 'nasa_epic_directory'
     nasa_url = 'https://api.nasa.gov/planetary/apod'
     nasa_epic_url = 'https://api.nasa.gov/EPIC/api/natural'
-    test_nasa_epic_image_url = 'https://api.nasa.gov/EPIC/archive/natural/2021/12/15/png/epic_1b_20211215001751.png?api_key=xhQ4MBfxmfhUsxakRU2rZqZrdIannJ5se0YJzUEl'
 
     try:
         load_dotenv()
@@ -112,8 +109,8 @@ def main():
         if not os.path.exists(nasa_epic_directory):
             os.makedirs(nasa_epic_directory)
 
-        # fetch_nasa_images(nasa_directory, nasa_url)
-        # fetch_nasa_images(nasa_directory, nasa_url)
+        fetch_nasa_images(nasa_directory, nasa_url)
+        fetch_nasa_images(nasa_directory, nasa_url)
         fetch_nasa_epic_images(nasa_epic_directory, nasa_epic_url)
 
     except (requests.exceptions.HTTPError,
