@@ -4,6 +4,8 @@ import os
 import datetime
 from dotenv import load_dotenv
 
+from telegram.ext import Updater, ExtBot
+
 
 def get_response(url, options=None):
     headers = {
@@ -105,9 +107,15 @@ def main():
         if not os.path.exists(nasa_epic_directory):
             os.makedirs(nasa_epic_directory)
 
-        fetch_spacex_last_launch(directory, url_spacex)
-        fetch_nasa_images(nasa_directory, nasa_url)
-        fetch_nasa_epic_images(nasa_epic_directory, nasa_epic_url)
+        # fetch_spacex_last_launch(directory, url_spacex)
+        # fetch_nasa_images(nasa_directory, nasa_url)
+        # fetch_nasa_epic_images(nasa_epic_directory, nasa_epic_url)
+        tkn = os.getenv('TELEGRAM_KEY')
+        bot = ExtBot(token=os.getenv('TELEGRAM_KEY'))
+        # updates = bot.getUpdates()
+        updates = bot.get_me()
+        print(updates)
+        bot.send_message(chat_id=os.getenv('CHAT_ID'), text="I'm sorry Dave I'm afraid I can't do that.")
 
     except (requests.exceptions.HTTPError,
             requests.exceptions.InvalidSchema,
@@ -126,4 +134,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
