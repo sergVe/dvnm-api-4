@@ -1,10 +1,11 @@
+import time
 from urllib.parse import urlparse, urlsplit, unquote
 import requests
 import os
 import datetime
 from dotenv import load_dotenv
 
-from telegram.ext import Updater, ExtBot
+from telegram.ext import ExtBot
 
 
 def add_0(item: str):
@@ -83,7 +84,8 @@ def fetch_nasa_epic_images(directory, url):
                 image_date = datetime.datetime.fromisoformat(v)
             if k == 'image':
                 image_name = v
-        image_url = f'https://api.nasa.gov/EPIC/archive/natural/{image_date.year}/{add_0(str(image_date.month))}' \
+        image_url = f'https://api.nasa.gov/EPIC/archive/natural/' \
+                    f'{image_date.year}/{add_0(str(image_date.month))}' \
                     f'/{add_0(str(image_date.day))}/png/{image_name}.png'
 
         filename = f'nasa_epic_{i + 1}.png'
@@ -91,33 +93,35 @@ def fetch_nasa_epic_images(directory, url):
         download_image(path, image_url, query_params)
 
 
+def post_photos_to_telegram(directory, delay=24 * 60 * 60):
+    telegram_token = os.getenv('TELEGRAM_KEY')
+    chat_id = os.getenv('CHAT_ID')
+    bot = ExtBot(token=telegram_token)
+    path = os.path.abspath(directory)
+    for i_photo in os.listdir(path):
+        i_photo_path = os.path.abspath(os.path.join(path, i_photo))
+        with open(i_photo_path, mode='rb') as photo:
+            bot.send_photo(chat_id, photo)
+        time.sleep(delay)
+
+
 def main():
-    url_spacex = 'https://api.spacexdata.com/v4/launches/'
-    directory = 'images'
-    # nasa_directory = 'nasa_directory'
-    # nasa_epic_directory = 'nasa_epic_directory'
+    spacex_url = 'https://api.spacexdata.com/v4/launches/'
     nasa_url = 'https://api.nasa.gov/planetary/apod'
     nasa_epic_url = 'https://api.nasa.gov/EPIC/api/natural'
+    directory = 'images'
 
     try:
         load_dotenv()
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        # fetch_spacex_last_launch(directory, url_spacex)
-        # fetch_nasa_images(directory, nasa_url)
-        # fetch_nasa_epic_images(directory, nasa_epic_url)
-        telegram_token = os.getenv('TELEGRAM_KEY')
-        chat_id = os.getenv('CHAT_ID')
-        bot = ExtBot(token=telegram_token)
-        bot.send_message(chat_id, 'Hi!')
-        with open('/home/serge/PycharmProjects/training/devman/dvnm-api-4/images/nasa_epic_9.png', mode='rb') as photo:
-            bot.send_photo(chat_id, photo)
-        # updater = Updater(telegram_token, use_context=True)
-        # dispatcher = updater.dispatcher
-        # updater.start_polling()
-        # updater.idle()
+        fetch_spacex_last_launch(directory, spacex_url)
+        fetch_nasa_images(directory, nasa_url)
+        fetch_nasa_epic_images(directory, nasa_epic_url)
 
+        post_delay = int(os.getenv('POST_DELAY'))
+        post_photos_to_telegram(directory, delay=post_delay)
 
     except (requests.exceptions.HTTPError,
             requests.exceptions.InvalidSchema,

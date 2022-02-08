@@ -10,7 +10,13 @@ pip install -r requirements.txt
 ```
 ## Переменные окружения
 Создайте в корне проекта файл .env
-Запишите в него токен, полученный на https://api.nasa.gov, без него Вы не получите доступ к API
+1) Запишите в него токен, полученный на https://api.nasa.gov, без него Вы не получите доступ 
+к API NASA
+2) Получите Ваш ключ Телеграм, вызвав BotFather, а также chat_id
+3) Установите POST_DELAY - задержку отправки фотографий в чат (в секундах)
 ```python
-NASA_KEY='your_token'
+NASA_KEY='your_nasa_token'
+TELEGRAM_KEY='your_telegram_key'
+CHAT_ID='your chat_id'
+POST_DELAY='регулируемая задержка отправки фото в чат Телеграма'
 ```
