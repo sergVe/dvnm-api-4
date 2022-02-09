@@ -117,8 +117,8 @@ def main():
             os.makedirs(directory)
 
         fetch_spacex_last_launch(directory, spacex_url)
-        fetch_nasa_images(directory, nasa_url)
-        fetch_nasa_epic_images(directory, nasa_epic_url)
+        # fetch_nasa_images(directory, nasa_url)
+        # fetch_nasa_epic_images(directory, nasa_epic_url)
 
         post_delay = int(os.getenv('POST_DELAY'))
         post_photos_to_telegram(directory, delay=post_delay)
