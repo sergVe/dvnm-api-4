@@ -38,11 +38,10 @@ def fetch_spacex_last_launch(directory):
     launches = response.json()
 
     for launch in launches:
-        for image_size, images_addresses in launch['links']['flickr'].items():
-            if image_size == 'original' and images_addresses:
-                images_links.extend(images_addresses)
-                break
-        if images_links:
+        desired_images = launch['links']['flickr']
+        images_addresses = desired_images.get('original')
+        if images_addresses:
+            images_links.extend(images_addresses)
             break
 
     for link in images_links:
@@ -67,14 +66,14 @@ def fetch_nasa_images(directory, nasa_key):
     images_descriptions = response.json()
     images_links = [image_description[key] for image_description in images_descriptions for key in image_description if
                     key == 'hdurl']
-    for i, i_link in enumerate(images_links, start=1):
-        filename = f'nasa_{i}{get_file_extension(i_link)}'
+
+    for image_suffix, image_link in enumerate(images_links, start=1):
+        filename = f'nasa_{image_suffix}{get_file_extension(image_link)}'
         path = os.path.abspath(os.path.join(directory, filename))
-        download_image(path, i_link, query_params)
+        download_image(path, image_link, query_params)
 
 
 def fetch_nasa_epic_images(directory, nasa_key):
-    image_date, image_name, image_url = '', '', ''
     query_params = {
         'api_key': nasa_key
     }
@@ -87,17 +86,14 @@ def fetch_nasa_epic_images(directory, nasa_key):
 
     limit_response = response.json()[:10]
 
-    for i, response_unit in enumerate(limit_response, start=1):
-        for field_name, field_value in response_unit.items():
-            if field_name == 'date':
-                image_date = datetime.datetime.fromisoformat(field_value)
-            if field_name == 'image':
-                image_name = field_value
+    for image_suffix, image_description in enumerate(limit_response, start=1):
+        image_date = datetime.datetime.fromisoformat(image_description.get('date'))
+        image_name = image_description.get('image')
         image_url = f'https://api.nasa.gov/EPIC/archive/natural/' \
                     f'{image_date.year}/{image_date.month:02}' \
                     f'/{image_date.day:02}/png/{image_name}.png'
 
-        filename = f'nasa_epic_{i}.png'
+        filename = f'nasa_epic_{image_suffix}.png'
         path = os.path.abspath(os.path.join(directory, filename))
         download_image(path, image_url, query_params)
 
